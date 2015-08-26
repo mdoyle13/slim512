@@ -1,8 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var Marionette = require('backbone.marionette');
+var $ = require('jquery')
 var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
 // load up an App instance from the module
 
 // this needs to be done for some reason
@@ -14,42 +15,89 @@ var App = require('./js/app');
 var Router = require('./js/router');
 
 //create a new one baby
-var app = new App;
-var approuter = new Router;
+var app = new App(),
+    approuter = new Router();
 
-app.on("start", function(options){
-  if (Backbone.history){
-    console.log('on start event fired, backbone history be working')
-    Backbone.history.start();  
-  }
-});
+//on dom ready start this bitch up
+$(function() {
+  
+  app.on("before:start", function() {
+    this.setRootLayout();
+  });
+  
+  
+  app.on("start", function(options){
+    if (Backbone.history){
+      Backbone.history.start({
+        pushState: false
+      });  
+    }
+  });
+  app.start();
+})
 
-app.start();
-},{"./js/app":2,"./js/router":3,"backbone":9,"backbone.marionette":5}],2:[function(require,module,exports){
+},{"./js/app":2,"./js/router":5,"backbone":11,"backbone.marionette":7,"jquery":12}],2:[function(require,module,exports){
 //include other app stuff
 
-var _ = require('underscore');
-var $ = require('jquery');
-var Mn = require('backbone.marionette');
+var _ = require('underscore'),
+    $ = require('jquery'),
+    Mn = require('backbone.marionette'),
+    Layout = require('./views/layout'),
+    EventsCollection = require('./collections/events.js');
 
 module.exports = Mn.Application.extend({
   initialize: function() {
-    console.log('app view initialized');
+    eventsCollection = new EventsCollection();
+    eventsCollection.fetch({
+      reset: true,
+      dataType: 'jsonp'
+    });
+  },
+  
+  setRootLayout: function () {
+  	this.root = new Layout();
+    //render that root layout dude
+    this.root.render();
   }
 });
 
 
-},{"backbone.marionette":5,"jquery":10,"underscore":11}],3:[function(require,module,exports){
+},{"./collections/events.js":3,"./views/layout":6,"backbone.marionette":7,"jquery":12,"underscore":13}],3:[function(require,module,exports){
+var _ = require('underscore');
+var $ = require('jquery');
+var Backbone = require('backbone');
+var Mn = require('backbone.marionette');
+
+var Event = require('../models/event');
+
+module.exports = Backbone.Collection.extend({
+  model: Event,
+  url: 'http://do512.com/events.json',
+  parse: function( response ) {
+    return response.events
+  }
+});
+},{"../models/event":4,"backbone":11,"backbone.marionette":7,"jquery":12,"underscore":13}],4:[function(require,module,exports){
+var _ = require('underscore');
+var $ = require('jquery');
+var Backbone = require('backbone');
+var Mn = require('backbone.marionette');
+
+module.exports = Event = Backbone.Model.extend({
+  initialize: function() {
+    console.log(this)
+  }
+});
+},{"backbone":11,"backbone.marionette":7,"jquery":12,"underscore":13}],5:[function(require,module,exports){
 "use strict";
 
 var _ = require('underscore');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var Layout = require('./views/layout');
 
 module.exports = Backbone.Router.extend({
   initialize: function(options) {
-    console.log('init router')
+    console.log('init router');
   },
   
   routes: {
@@ -57,13 +105,10 @@ module.exports = Backbone.Router.extend({
   },
   
   index: function() {
-    var layoutView = new Layout;
-    layoutView.render();
-    
-  }
-  
+    console.log('index router initialized')
+  } 
 });
-},{"./views/layout":4,"backbone":9,"jquery":10,"underscore":11}],4:[function(require,module,exports){
+},{"backbone":11,"jquery":12,"underscore":13}],6:[function(require,module,exports){
 var _ = require('underscore');
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -81,7 +126,7 @@ module.exports = Mn.LayoutView.extend({
   }
 });
 
-},{"backbone":9,"backbone.marionette":5,"jquery":10,"underscore":11}],5:[function(require,module,exports){
+},{"backbone":11,"backbone.marionette":7,"jquery":12,"underscore":13}],7:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v2.4.2
@@ -3520,7 +3565,7 @@ module.exports = Mn.LayoutView.extend({
   return Marionette;
 }));
 
-},{"backbone":8,"backbone.babysitter":6,"backbone.wreqr":7,"underscore":11}],6:[function(require,module,exports){
+},{"backbone":10,"backbone.babysitter":8,"backbone.wreqr":9,"underscore":13}],8:[function(require,module,exports){
 // Backbone.BabySitter
 // -------------------
 // v0.1.8
@@ -3712,7 +3757,7 @@ module.exports = Mn.LayoutView.extend({
 
 }));
 
-},{"backbone":8,"underscore":11}],7:[function(require,module,exports){
+},{"backbone":10,"underscore":13}],9:[function(require,module,exports){
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
 // v1.3.3
@@ -4149,7 +4194,7 @@ module.exports = Mn.LayoutView.extend({
 
 }));
 
-},{"backbone":8,"underscore":11}],8:[function(require,module,exports){
+},{"backbone":10,"underscore":13}],10:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.1
 
@@ -6026,7 +6071,7 @@ module.exports = Mn.LayoutView.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":10,"underscore":11}],9:[function(require,module,exports){
+},{"jquery":12,"underscore":13}],11:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.2
 
@@ -7923,7 +7968,7 @@ module.exports = Mn.LayoutView.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":10,"underscore":11}],10:[function(require,module,exports){
+},{"jquery":12,"underscore":13}],12:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -17135,7 +17180,7 @@ return jQuery;
 
 }));
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
