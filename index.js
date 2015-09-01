@@ -13,15 +13,16 @@ if (window.__agent) {
 var App = require('./js/app');
 var Router = require('./js/router');
 
-//create a new one baby
-var app = new App(),
-    approuter = new Router();
+// TODO: Get this off the window
+
+window.app = new App();
+var approuter = new Router({app: app});
 
 //on dom ready start this bitch up
 $(function() {
   
   app.on("before:start", function() {
-    this.setRootLayout();
+    this.layoutView = this.setRootLayout();
   });
   
   

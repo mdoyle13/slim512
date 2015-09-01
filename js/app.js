@@ -3,16 +3,12 @@
 var _ = require('underscore'),
     $ = require('jquery'),
     Mn = require('backbone.marionette'),
-    Layout = require('./views/layout'),
-    EventsCollection = require('./collections/events.js');
-
+    Layout = require('./views/layout');
+    
+    
 module.exports = Mn.Application.extend({
   initialize: function() {
-    eventsCollection = new EventsCollection();
-    eventsCollection.fetch({
-      reset: true,
-      dataType: 'jsonp'
-    });
+    console.log('app init')
   },
   
   setRootLayout: function () {

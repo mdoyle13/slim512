@@ -9,8 +9,11 @@
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
-
-        
+        <style type="text/css" media="screen">
+        body {
+          font-family: 'Courier New';
+        }
+        </style>
     </head>
     <body>
       <h1>Slim 512</h1>
@@ -25,6 +28,9 @@
         </section>
       </script>
       
+      <script type="text/template" id="event-view">
+        <div><a href="http://do512.com<%= permalink %>"><%= title %></a> @ <%= venue.title %> | <%= begin_time %></div>
+      </script>  
       
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
